@@ -7,8 +7,8 @@
 		"lint": "bunx --bun @biomejs/biome check --write --max-diagnostics 100",
 		"typescript": "bunx --bun tsc",
 		"dev": "bun --bun run --watch src/index.tsx",
-		"release": "bun build ./src/index.tsx --compile --outfile gittui",
-		"start":"./gittui"
+		"release": "bun build ./src/index.tsx --compile --outfile bin/gittui",
+		"start": "./bin/gittui"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.11",
@@ -20,6 +20,7 @@
 	"dependencies": {
 		"@opentui/core": "^0.5.11",
 		"@opentui/react": "^0.5.11",
-		"react": "^19.3.0"
+		"react": "^19.3.0",
+		"zustand": "^5.0.15"
 	}
 }

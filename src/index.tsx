@@ -1,30 +1,43 @@
-import { createCliRenderer } from "@opentui/core";
-import {
-	createRoot,
-	useKeyboard,
-	useRenderer,
-	useTerminalDimensions,
-} from "@opentui/react";
+import { BoxRenderable, createCliRenderer } from "@opentui/core";
+import { createDiff } from "./components/Diff";
+import { createFootBar } from "./components/Footbar";
+import { createSidebar } from "./components/Sidebar";
 
-function App() {
-	const renderer = useRenderer();
-	const { width, height } = useTerminalDimensions();
+const renderer = await createCliRenderer({
+	exitOnCtrlC: true,
+	backgroundColor: "#1131E9",
+});
 
-	useKeyboard((key) => {
-		if (key.name === "escape") renderer.destroy();
-	});
+const sidebar = createSidebar(renderer);
+const diff = createDiff(renderer);
+const footbar = createFootBar(renderer);
 
-	return (
-		<box backgroundColor={"blue"} padding={2}>
-			<text>
-				Terminal: {width}x{height}
-			</text>
-			<box style={{ backgroundColor: "red", padding: 5 }}>
-				<text>Press ESC to close</text>
-			</box>
-		</box>
-	);
-}
+const app = new BoxRenderable(renderer, {
+	flexDirection: "column",
+	gap: 1,
+	height: "100%",
+	width: "100%",
+	backgroundColor: "#0B1215",
+});
 
-const renderer = await createCliRenderer();
-createRoot(renderer).render(<App />);
+const appBox = new BoxRenderable(renderer, {
+	flexDirection: "row",
+	gap: 1,
+	height: "100%",
+	width: "100%",
+});
+
+appBox.add(sidebar);
+appBox.add(diff);
+
+app.add(appBox);
+app.add(footbar);
+
+renderer.root.add(app);
+
+renderer.keyInput.on("keypress", (key) => {
+	if (key.name === "q") {
+		renderer.destroy();
+		process.exit(0);
+	}
+});
